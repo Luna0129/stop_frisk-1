@@ -1,5 +1,5 @@
 #######################################
-######## 1. Cleaning Data #############
+######## 1a. Cleaning Data ############
 #######################################
 
 library(sf)
@@ -24,7 +24,7 @@ names(race_df) <- c("ct2010", "total_pop", "white", "black")
 race_merged <- merge(CT.bound, race_df, by = "ct2010")
 
 #############################################
-######## 2. Subset Stop & Frisk Data ########
+######## 1b. Subset Stop & Frisk Data #######
 #############################################
 
 # Load in the data
