@@ -18,5 +18,6 @@ sf2011$time2 <- paste(sf2011$time, ":00")
 # First, we need to convert time to time
 require("chron")
 sf2011$time3 <- chron(times=sf2011$time2)
+# Finally, we can subset
+sfnight <- sf2011[sf2011$time3 < chron(times="06:00:00") | sf2011$time3 > chron(times="22:00:00"),] 
 
-sfnight <- sf2011[sf2011$time3 < 06:00:00 | sf2011$time3 > 22:00:00,] # This needs fixing
