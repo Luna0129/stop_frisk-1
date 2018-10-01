@@ -23,6 +23,9 @@ names(race_df) <- c("ct2010", "total_pop", "white", "black")
 #need to figure out how to best merge!
 race_merged <- merge(CT.bound, race_df, by = "ct2010")
 
+#############################################
+######## 2. Subset Stop & Frisk Data ########
+#############################################
 
 # Load in the data
 load("~/Github/stop_frisk/data/sqf.RData")
@@ -39,3 +42,11 @@ sf2011$time3 <- chron(times=sf2011$time2)
 # Finally, we can subset
 sfnight <- sf2011[sf2011$time3 < chron(times="06:00:00") | sf2011$time3 > chron(times="22:00:00"),] 
 
+# Subset to weeknights only
+# convert date to date object
+sfnight$date <- as.Date(sfnight$date)
+# Add the day of the week to the data frame
+sfnight$day <- weekdays(sfnight$date)
+# Select only Sunday - Thursday
+sffinal <- sfnight[sfnight$day == "Sunday" | sfnight$day =="Monday" |sfnight$day == "Tuesday" |
+                     sfnight$day =="Wednesday" | sfnight$day =="Thursday",]
