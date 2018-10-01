@@ -3,7 +3,25 @@
 #######################################
 
 library(sf)
-CT.boundaries <- st_read("2010_Census_Tracts/geo_export_bca342cd-a6e0-423a-849d-f4514a20112a.shp")
+CT.boundaries <- st_read("shape/2010_Census_Tracts/geo_export_bca342cd-a6e0-423a-849d-f4514a20112a.shp")
+
+#get demographic data
+api.key.install(key = "3fd6f9caf6ea78674dc4362076df79153d95770c")
+geo <- geo.make(state=c("NY"), county=c(5, 47, 61, 81, 85), tract="*")
+
+race <- acs.fetch(endyear = 2011, geography = geo, 
+                  table.number = "C02003", col.names = "pretty")
+attr(race, "acs.colnames")
+race_df <- data.frame(race@geography$tract, 
+                      race@estimate[,c("Detailed Race: Total:",
+                                       "Detailed Race: Population of one race: White", 
+                                       "Detailed Race: Population of one race: Black or African American")], 
+                      stringsAsFactors = FALSE)
+rownames(race_df) <- 1:nrow(race_df)
+names(race_df) <- c("ct2010", "total_pop", "white", "black")
+
+#need to figure out how to best merge!
+race_merged <- merge(CT.bound, race_df, by = "ct2010")
 
 
 # Load in the data
