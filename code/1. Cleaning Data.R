@@ -9,20 +9,37 @@ CT.boundaries <- st_read("shape/2010_Census_Tracts/geo_export_bca342cd-a6e0-423a
 #get demographic data
 api.key.install(key = "3fd6f9caf6ea78674dc4362076df79153d95770c")
 geo <- geo.make(state=c("NY"), county=c(5, 47, 61, 81, 85), tract="*")
+#Bronx (Bronx County) = 5
+#Brooklyn (King County) = 47
+#Manhattan (New York County) = 61
+#Queens (Queens County) = 81
+#Staten Island (Richmond County) = 85
 
 race <- acs.fetch(endyear = 2011, geography = geo, 
                   table.number = "C02003", col.names = "pretty")
 attr(race, "acs.colnames")
-race_df <- data.frame(race@geography$tract, 
+race_df <- data.frame(race@geography$county, race@geography$tract, 
                       race@estimate[,c("Detailed Race: Total:",
                                        "Detailed Race: Population of one race: White", 
-                                       "Detailed Race: Population of one race: Black or African American")], 
+                                       "Detailed Race: Population of one race: Black or African American", 
+                                       "Detailed Race: Population of one race: American Indian and Alaska Native",
+                                       "Detailed Race: Population of one race: Asian alone", 
+                                       "Detailed Race: Population of one race: Native Hawaiian and Other Pacific Islander")], 
                       stringsAsFactors = FALSE)
 rownames(race_df) <- 1:nrow(race_df)
-names(race_df) <- c("ct2010", "total_pop", "white", "black")
+names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "p.islander")
+race_df$county[race_df$county %in% 61] <- 1
+race_df$county[race_df$county %in% 5] <- 2
+race_df$county[race_df$county %in% 47] <- 3
+race_df$county[race_df$county %in% 81] <- 4
+race_df$county[race_df$county %in% 85] <- 5
 
-#need to figure out how to best merge!
-race_merged <- merge(CT.bound, race_df, by = "ct2010")
+race_df["boro_ct201"] <- paste(race_df$county, race_df$tract, sep = "")
+
+race_merged <- merge(CT.boundaries, race_df, by = "boro_ct201")
+#somehow missing 2 observations?
+#also no "hispanic/latino" data as of right now
+
 
 #############################################
 ######## 1b. Subset Stop & Frisk Data #######
