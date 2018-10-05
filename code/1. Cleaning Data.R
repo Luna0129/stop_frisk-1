@@ -4,6 +4,8 @@
 
 library(sf)
 library(acs)
+library(ggplot2)
+
 CT.boundaries <- st_read("shape/2010_Census_Tracts/geo_export_bca342cd-a6e0-423a-849d-f4514a20112a.shp")
 
 #get demographic data
@@ -39,14 +41,27 @@ race_df["boro_ct201"] <- paste(race_df$county, race_df$tract, sep = "")
 race_merged <- merge(CT.boundaries, race_df, by = "boro_ct201")
 #somehow missing 2 observations?
 #also no "hispanic/latino" data as of right now
+#need to remove the census tracts with no data
 
+#calculate percentages of total population
+race_merged["per_white"] <- race_merged$white/race_merged$total_pop
+race_merged["per_black"] <- race_merged$black/race_merged$total_pop
+race_merged["per_nat.amer"] <- race_merged$native.american/race_merged$total_pop
+race_merged["per_asia"] <- race_merged$native.american/race_merged$total_pop
+race_merged["per_pisl"] <- race_merged$native.american/race_merged$total_pop
+
+plot(race_merged["per_white"])
+plot(race_merged["per_black"])
+#plot(race_merged["per_nat.amer"])
+#plot(race_merged["per_asia"])
+#plot(race_merged["per_pisl"])
 
 #############################################
 ######## 1b. Subset Stop & Frisk Data #######
 #############################################
 
 # Load in the data
-load("~/Github/stop_frisk/data/sqf.RData")
+load("data/sqf.RData")
 
 # Subset to 2011
 sf2011 <- stops[stops$year==2011,]
