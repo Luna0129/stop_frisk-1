@@ -31,6 +31,8 @@ race_df <- data.frame(race@geography$county, race@geography$tract,
                       stringsAsFactors = FALSE)
 rownames(race_df) <- 1:nrow(race_df)
 names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "white.hisp", "black.hisp")
+race_df["other"] <- race_df$total_pop - (race_df$white + race_df$black + race_df$native.american + 
+                                           race_df$asia + race_df$white.hisp + race_df$black.hisp)
 race_df$county[race_df$county %in% 61] <- 1
 race_df$county[race_df$county %in% 5] <- 2
 race_df$county[race_df$county %in% 47] <- 3
@@ -47,6 +49,7 @@ race_merged["per_nat.amer"] <- race_merged$native.american/race_merged$total_pop
 race_merged["per_asia"] <- race_merged$asian/race_merged$total_pop
 race_merged["per_whisp"] <- race_merged$white.hisp/race_merged$total_pop
 race_merged["per_bhisp"] <- race_merged$black.hisp/race_merged$total_pop
+race_merged["per_other"] <- race_merged$other/race_merged$total_pop
 
 plot(race_merged["per_white"])
 plot(race_merged["per_black"])
@@ -54,6 +57,7 @@ plot(race_merged["per_black"])
 #plot(race_merged["per_asia"])
 #plot(race_merged["per_whisp"])
 #plot(race_merged["per_bhisp])
+plot(race_merged["per_other"])
 
 #############################################
 ######## 1b. Subset Stop & Frisk Data #######
