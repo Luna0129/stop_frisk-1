@@ -4,8 +4,8 @@
 
 library(sf)
 library(acs)
-library(ggplot2)
 
+#read in shapefile
 CT.boundaries <- st_read("shape/2010_Census_Tracts/geo_export_bca342cd-a6e0-423a-849d-f4514a20112a.shp")
 
 #get demographic data
@@ -16,10 +16,11 @@ geo <- geo.make(state=c("NY"), county=c(5, 47, 61, 81, 85), tract="*")
 #Manhattan (New York County) = 61
 #Queens (Queens County) = 81
 #Staten Island (Richmond County) = 85
-
 race <- acs.fetch(endyear = 2011, geography = geo, 
                   table.number = "B03002", col.names = "pretty")
 attr(race, "acs.colnames")
+
+#create data.frame of relevant census data
 race_df <- data.frame(race@geography$county, race@geography$tract, 
                       race@estimate[,c("Hispanic or Latino by Race: Total:",
                                        "Hispanic or Latino by Race: Not Hispanic or Latino: White alone", 
@@ -32,7 +33,7 @@ race_df <- data.frame(race@geography$county, race@geography$tract,
 rownames(race_df) <- 1:nrow(race_df)
 names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "white.hisp", "black.hisp")
 race_df["other"] <- race_df$total_pop - (race_df$white + race_df$black + race_df$native.american + 
-                                           race_df$asia + race_df$white.hisp + race_df$black.hisp)
+                                           race_df$asian + race_df$white.hisp + race_df$black.hisp)
 race_df$county[race_df$county %in% 61] <- 1
 race_df$county[race_df$county %in% 5] <- 2
 race_df$county[race_df$county %in% 47] <- 3
@@ -51,8 +52,8 @@ race_merged["per_whisp"] <- race_merged$white.hisp/race_merged$total_pop
 race_merged["per_bhisp"] <- race_merged$black.hisp/race_merged$total_pop
 race_merged["per_other"] <- race_merged$other/race_merged$total_pop
 
-plot(race_merged["per_white"])
-plot(race_merged["per_black"])
+#plot(race_merged["per_white"])
+#plot(race_merged["per_black"])
 #plot(race_merged["per_nat.amer"])
 #plot(race_merged["per_asia"])
 #plot(race_merged["per_whisp"])
