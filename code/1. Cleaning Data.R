@@ -18,18 +18,19 @@ geo <- geo.make(state=c("NY"), county=c(5, 47, 61, 81, 85), tract="*")
 #Staten Island (Richmond County) = 85
 
 race <- acs.fetch(endyear = 2011, geography = geo, 
-                  table.number = "C02003", col.names = "pretty")
+                  table.number = "B03002", col.names = "pretty")
 attr(race, "acs.colnames")
 race_df <- data.frame(race@geography$county, race@geography$tract, 
-                      race@estimate[,c("Detailed Race: Total:",
-                                       "Detailed Race: Population of one race: White", 
-                                       "Detailed Race: Population of one race: Black or African American", 
-                                       "Detailed Race: Population of one race: American Indian and Alaska Native",
-                                       "Detailed Race: Population of one race: Asian alone", 
-                                       "Detailed Race: Population of one race: Native Hawaiian and Other Pacific Islander")], 
+                      race@estimate[,c("Hispanic or Latino by Race: Total:",
+                                       "Hispanic or Latino by Race: Not Hispanic or Latino: White alone", 
+                                       "Hispanic or Latino by Race: Not Hispanic or Latino: Black or African American alone", 
+                                       "Hispanic or Latino by Race: Not Hispanic or Latino: American Indian and Alaska Native alone",
+                                       "Hispanic or Latino by Race: Not Hispanic or Latino: Asian alone", 
+                                       "Hispanic or Latino by Race: Hispanic or Latino: White alone", 
+                                       "Hispanic or Latino by Race: Hispanic or Latino: Black or African American alone")], 
                       stringsAsFactors = FALSE)
 rownames(race_df) <- 1:nrow(race_df)
-names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "p.islander")
+names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "white.hisp", "black.hisp")
 race_df$county[race_df$county %in% 61] <- 1
 race_df$county[race_df$county %in% 5] <- 2
 race_df$county[race_df$county %in% 47] <- 3
@@ -37,41 +38,22 @@ race_df$county[race_df$county %in% 81] <- 4
 race_df$county[race_df$county %in% 85] <- 5
 race_df["boro_ct201"] <- paste(race_df$county, race_df$tract, sep = "")
 
-hisp.lat <- acs.fetch(endyear = 2011, geography = geo, 
-                      table.number = "B03001", col.names = "pretty")
-
-hl_df <- data.frame(race@geography$county, race@geography$tract,
-                       dif_race@estimate[,"Hispanic or Latino by Specific Origin: Hispanic or Latino:"], 
-                       stringsAsFactors = FALSE)
-rownames(hl_df) <- 1:nrow(race_df)
-names(hl_df) <- c("county", "tract", "hisp.lat")
-hl_df$county[race_df$county %in% 61] <- 1
-hl_df$county[race_df$county %in% 5] <- 2
-hl_df$county[race_df$county %in% 47] <- 3
-hl_df$county[race_df$county %in% 81] <- 4
-hl_df$county[race_df$county %in% 85] <- 5
-hl_df["boro_ct201"] <- paste(race_df$county, race_df$tract, sep = "")
-
 race_merged <- merge(CT.boundaries, race_df, by = "boro_ct201")
-race_merged <- merge(race_merged, hl_df, by = "boro_ct201")
-#somehow missing 2 observations?
-#need to remove the census tracts with no data?
 
 #calculate percentages of total population
 race_merged["per_white"] <- race_merged$white/race_merged$total_pop
 race_merged["per_black"] <- race_merged$black/race_merged$total_pop
 race_merged["per_nat.amer"] <- race_merged$native.american/race_merged$total_pop
-race_merged["per_asia"] <- race_merged$native.american/race_merged$total_pop
-race_merged["per_pisl"] <- race_merged$native.american/race_merged$total_pop
-race_merged["per_hl"] <- race_merged$hisp.lat/race_merged$total_pop
+race_merged["per_asia"] <- race_merged$asian/race_merged$total_pop
+race_merged["per_whisp"] <- race_merged$white.hisp/race_merged$total_pop
+race_merged["per_bhisp"] <- race_merged$black.hisp/race_merged$total_pop
 
 plot(race_merged["per_white"])
 plot(race_merged["per_black"])
 #plot(race_merged["per_nat.amer"])
 #plot(race_merged["per_asia"])
-#plot(race_merged["per_pisl"])
-#plot(race_merged["per_hl"])
-#missing data from some census tracts
+#plot(race_merged["per_whisp"])
+#plot(race_merged["per_bhisp])
 
 #############################################
 ######## 1b. Subset Stop & Frisk Data #######
