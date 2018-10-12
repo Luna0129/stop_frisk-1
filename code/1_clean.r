@@ -2,7 +2,7 @@
 ######## 1a. Cleaning Data ############
 #######################################
 
-library(sf)
+library(rgdal)
 library(acs)
 library(sp)
 library(ggplot2)
@@ -12,7 +12,7 @@ require("chron")
 # CENSUS TRACT POLYGONS
 
 #read in shapefile
-CT.boundaries <- st_read("shape/2010_Census_Tracts/geo_export_bca342cd-a6e0-423a-849d-f4514a20112a.shp")
+CT.boundaries <- readOGR("shape/2010_Census_Tracts/geo_export_bca342cd-a6e0-423a-849d-f4514a20112a.shp")
 
 
 # CENSUS TRACT DATA FROM CENSUS API
@@ -58,13 +58,13 @@ race_df["boro_ct201"] <- paste(race_df$county, race_df$tract, sep = "")
 race_merged <- merge(CT.boundaries, race_df, by = "boro_ct201")
 
 #calculate percentages of total population
-race_merged["per_white"] <- race_merged$white/race_merged$total_pop
-race_merged["per_black"] <- race_merged$black/race_merged$total_pop
-race_merged["per_nat.amer"] <- race_merged$native.american/race_merged$total_pop
-race_merged["per_asia"] <- race_merged$asian/race_merged$total_pop
-race_merged["per_whisp"] <- race_merged$white.hisp/race_merged$total_pop
-race_merged["per_bhisp"] <- race_merged$black.hisp/race_merged$total_pop
-race_merged["per_other"] <- race_merged$other/race_merged$total_pop
+race_merged@data["per_white"] <- race_merged$white/race_merged$total_pop
+race_merged@data["per_black"] <- race_merged$black/race_merged$total_pop
+race_merged@data["per_nat.amer"] <- race_merged$native.american/race_merged$total_pop
+race_merged@data["per_asia"] <- race_merged$asian/race_merged$total_pop
+race_merged@data["per_whisp"] <- race_merged$white.hisp/race_merged$total_pop
+race_merged@data["per_bhisp"] <- race_merged$black.hisp/race_merged$total_pop
+race_merged@data["per_other"] <- race_merged$other/race_merged$total_pop
 
 
 # DIAGNOSTIC PLOTS
@@ -110,10 +110,9 @@ sf.final <- sfnight[sfnight$day %in% c('Sunday', 'Monday', 'Tuesday', 'Wednesday
 apply(sf.final[, c('lon', 'lat')], MARGIN=2, FUN=function(col) {table(is.na(col))})
 sf.final <- sf.final[!is.na(sf.final$lon) & !is.na(sf.final$lat),]
 
-# Convert to sf object
-sqf.sf <- st_as_sf(sf.final,
-    coords=c('lon', 'lat'),
-    crs=st_crs(race_merged))
+# Convert to SpatialPointsDataFrame
+coords <- sf.final[, c('lon', 'lat')]
+sqf.spdf <- SpatialPointsDataFrame(coords, sf.final, proj4string=race_merged@proj4string)
 
 # Variables of interest
 sqf.vars <- c(names(sqf.sf))
