@@ -12,8 +12,6 @@ sqf.ct <- as_tibble(sqf.ct)
 cols.stopped <- names(sqf.ct)[grep('^stopped', names(sqf.ct))]
 sqf.ct  <- sqf.ct %>% group_by(boro_ct201) %>% mutate(total = length(year))
 
-sqf.ct$stopped.total <- stopped.total
-
 # Rates
 rates <- sqf.ct %>%
     group_by(boro_ct201) %>%
