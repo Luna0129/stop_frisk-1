@@ -18,4 +18,5 @@ rates <- sqf.ct.grp %>%
         total_stopped=mean(total),
         per_white=mean(per_white), per_black=mean(per_black), per_nat.amer=mean(per_nat.amer), per_asia=mean(per_asia), per_whisp=mean(per_whisp), per_bhisp=mean(per_bhisp), per_other=mean(per_other))
 
+save(rates, file='data/rates.rdata')
 
