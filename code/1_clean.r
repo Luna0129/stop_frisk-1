@@ -44,8 +44,8 @@ rownames(race_df) <- 1:nrow(race_df)
 names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "white.hisp", "black.hisp")
 race_df["other"] <- race_df$total_pop - (race_df$white + race_df$black + race_df$native.american + 
                                            race_df$asia + race_df$white.hisp + race_df$black.hisp)
+
 # Standardize census tract codes between shapefile (coded by borough) and census (coded by county)
-                                           race_df$asian + race_df$white.hisp + race_df$black.hisp)
 race_df$county[race_df$county %in% 61] <- 1
 race_df$county[race_df$county %in% 5] <- 2
 race_df$county[race_df$county %in% 47] <- 3
