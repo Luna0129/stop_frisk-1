@@ -10,7 +10,8 @@ sqf.ct <- as_tibble(sqf.ct)
 
 # CALCULATE RATES
 cols.stopped <- names(sqf.ct)[grep('^stopped', names(sqf.ct))]
-stopped.total <- apply(sqf.ct[cols.stopped], 1, sum)
+stopped.total <- sqf.ct %>% group_by(boro_ct201) %>% mutate(total = length(year))
+stopped.total <- stopped.total %>% select(boro_ct201, total)
 
 sqf.ct$stopped.total <- stopped.total
 
