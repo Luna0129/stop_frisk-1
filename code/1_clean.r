@@ -2,10 +2,12 @@
 ######## 1a. Cleaning Data ############
 #######################################
 
+
 library(rgdal)
 library(acs)
 library(sp)
 library(ggplot2)
+library(rgdal)
 require("chron")
 
 
@@ -58,13 +60,13 @@ race_df["boro_ct201"] <- paste(race_df$county, race_df$tract, sep = "")
 race_merged <- merge(CT.boundaries, race_df, by = "boro_ct201")
 
 #calculate percentages of total population
-race_merged@data["per_white"] <- race_merged$white/race_merged$total_pop
-race_merged@data["per_black"] <- race_merged$black/race_merged$total_pop
-race_merged@data["per_nat.amer"] <- race_merged$native.american/race_merged$total_pop
-race_merged@data["per_asia"] <- race_merged$asian/race_merged$total_pop
-race_merged@data["per_whisp"] <- race_merged$white.hisp/race_merged$total_pop
-race_merged@data["per_bhisp"] <- race_merged$black.hisp/race_merged$total_pop
-race_merged@data["per_other"] <- race_merged$other/race_merged$total_pop
+race_merged@data["per_white"] <- race_merged@data$white/race_merged@data$total_pop
+race_merged@data["per_black"] <- race_merged@data$black/race_merged@data$total_pop
+race_merged@data["per_nat.amer"] <- race_merged@data$native.american/race_merged@data$total_pop
+race_merged@data["per_asia"] <- race_merged@data$asian/race_merged@data$total_pop
+race_merged@data["per_whisp"] <- race_merged@data$white.hisp/race_merged@data$total_pop
+race_merged@data["per_bhisp"] <- race_merged@data$black.hisp/race_merged@data$total_pop
+race_merged@data["per_other"] <- race_merged@data$other/race_merged@data$total_pop
 
 
 # DIAGNOSTIC PLOTS
