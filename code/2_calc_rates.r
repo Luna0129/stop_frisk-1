@@ -10,16 +10,15 @@ sqf.ct <- as_tibble(sqf.ct)
 
 # CALCULATE RATES
 cols.stopped <- names(sqf.ct)[grep('^stopped', names(sqf.ct))]
-stopped.total <- sqf.ct %>% group_by(boro_ct201) %>% mutate(total = length(year))
-stopped.total <- stopped.total %>% select(boro_ct201, total)
+sqf.ct  <- sqf.ct %>% group_by(boro_ct201) %>% mutate(total = length(year))
 
 sqf.ct$stopped.total <- stopped.total
 
 # Rates
 rates <- sqf.ct %>%
     group_by(boro_ct201) %>%
-    summarise(stop.clothing=sum(stopped.bc.clothing)/sum(stopped.total),
-        stop.furtive=sum(stopped.bc.furtive)/sum(stopped.total),
-        total_stopped=mean(stopped.total))
+    summarise(stop.clothing=sum(stopped.bc.clothing)/total,
+        stop.furtive=sum(stopped.bc.furtive)/total,
+        total_stopped=mean(total))
 
 
