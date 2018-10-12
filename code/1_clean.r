@@ -115,15 +115,13 @@ coords <- sf.final[, c('lon', 'lat')]
 sqf.spdf <- SpatialPointsDataFrame(coords, sf.final, proj4string=race_merged@proj4string)
 
 # Variables of interest
-sqf.vars <- c(names(sqf.sf))
+sqf.vars <- c(names(sqf.spdf))
 ct.vars <- c('boro_ct201', 'boro_name', 'ntaname',
     'white', 'black', 'native.american', 'asian', 'white.hisp', 'black.hisp', 'other', 'total_pop',
     'per_white', 'per_black', 'per_nat.amer', 'per_asia', 'per_whisp', 'per_bhisp', 'per_other')
 
 # Merge with census tract data
-sqf.ct <- st_join(sqf.sf[sqf.vars],
-    race_merged[ct.vars])
-
+sqf.ct <- over(sf.final[, sqf.vars], race_merged[, ct.vars])
 
 # SAVE CLEANED DATA
 save(sqf.ct, file='data/sqf2011_ct.rdata')
