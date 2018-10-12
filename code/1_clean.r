@@ -68,6 +68,9 @@ race_merged@data["per_whisp"] <- race_merged@data$white.hisp/race_merged@data$to
 race_merged@data["per_bhisp"] <- race_merged@data$black.hisp/race_merged@data$total_pop
 race_merged@data["per_other"] <- race_merged@data$other/race_merged@data$total_pop
 
+# Save SpatialPolygons object from merged census tract data
+ct.sp <- SpatialPolygons(Srl=race_merged@polygons, pO=race_merged@plotOrder, proj4string=race_merged@proj4string)
+save(ct.sp, file='data/ct.sp.rdata')
 
 # DIAGNOSTIC PLOTS
 plot(race_merged["per_white"])
