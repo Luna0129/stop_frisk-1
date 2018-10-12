@@ -113,6 +113,7 @@ apply(sf.final[, c('lon', 'lat')], MARGIN=2, FUN=function(col) {table(is.na(col)
 sf.final <- sf.final[!is.na(sf.final$lon) & !is.na(sf.final$lat),]
 
 # Convert to SpatialPointsDataFrame
+sf.final <- as.data.frame(sf.final)
 coords <- sf.final[, c('lon', 'lat')]
 sqf.spdf <- SpatialPointsDataFrame(coords, sf.final, proj4string=race_merged@proj4string)
 
@@ -123,7 +124,12 @@ ct.vars <- c('boro_ct201', 'boro_name', 'ntaname',
     'per_white', 'per_black', 'per_nat.amer', 'per_asia', 'per_whisp', 'per_bhisp', 'per_other')
 
 # Merge with census tract data
-sqf.ct <- over(sf.final[, sqf.vars], race_merged[, ct.vars])
+sqf.pts <- sqf.spdf@data
+coordinates(sqf.pts) <- ~lon+lat
+proj4string(sqf.pts) <- proj4string(CT.boundaries)
+sqf.pts.ct <- cbind.data.frame(pts, boro_ct201=over(pts, CT.boundaries)$boro_ct201)
+
+sqf.ct <- merge(sqf.pts.ct, race_merged, by='boro_ct201')
 
 # SAVE CLEANED DATA
 save(sqf.ct, file='data/sqf2011_ct.rdata')
