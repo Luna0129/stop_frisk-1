@@ -1,9 +1,17 @@
 #######################################
 ########## 2. Calculate Rates #########
 #######################################
+require(sf)
+require(dplyr)
+
+# LOAD CLEANED DATA
+load('data/sqf2011_ct.rdata')
 
 
+# CALCULATE RATES
 # A. Clothing
+stop.clothing.total <- sqf.ct %>% group_by(boro_ct201) %>% summarise(rt.stop.clth.tot=sum(stopped.bc.clothing)/sum(total_pop))
+
 stop.clothing <- sffinal[sffinal$stopped.bc.clothing == TRUE,]
 
 
