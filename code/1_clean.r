@@ -1,8 +1,6 @@
 #######################################
 ######## 1a. Cleaning Data ############
 #######################################
-
-
 library(rgdal)
 library(acs)
 library(sp)
@@ -113,6 +111,7 @@ apply(sf.final[, c('lon', 'lat')], MARGIN=2, FUN=function(col) {table(is.na(col)
 sf.final <- sf.final[!is.na(sf.final$lon) & !is.na(sf.final$lat),]
 
 # Convert to SpatialPointsDataFrame
+sf.final <- as.data.frame(sf.final)
 coords <- sf.final[, c('lon', 'lat')]
 sqf.spdf <- SpatialPointsDataFrame(coords, sf.final, proj4string=race_merged@proj4string)
 
@@ -123,7 +122,12 @@ ct.vars <- c('boro_ct201', 'boro_name', 'ntaname',
     'per_white', 'per_black', 'per_nat.amer', 'per_asia', 'per_whisp', 'per_bhisp', 'per_other')
 
 # Merge with census tract data
-sqf.ct <- over(sf.final[, sqf.vars], race_merged[, ct.vars])
+require(GISTools)
+race_merged@data$total.stops <- poly.counts(sqf.spdf, race_merged)
+race_merged@data$stopped.clothing <- poly.counts(sqf.spdf[sqf.spdf@data$stopped.bc.clothing == TRUE,], race_merged)
+race_merged@data$stopped.furtive <- poly.counts(sqf.spdf[sqf.spdf@data$stopped.bc.furtive == TRUE,], race_merged)
+
+
 
 # SAVE CLEANED DATA
-save(sqf.ct, file='data/sqf2011_ct.rdata')
+save(race_merged, file='data/ct_data.rdata')
