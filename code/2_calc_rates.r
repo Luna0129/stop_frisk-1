@@ -6,20 +6,19 @@ require(dplyr)
 
 # LOAD CLEANED DATA
 load('data/sqf2011_ct.rdata')
-
+sqf.ct <- as_tibble(sqf.ct)
 
 # CALCULATE RATES
-# A. Clothing
-stop.clothing.total <- sqf.ct %>% group_by(boro_ct201) %>% summarise(rt.stop.clth.tot=sum(stopped.bc.clothing)/sum(total_pop))
+cols.stopped <- names(sqf.ct)[grep('^stopped', names(sqf.ct))]
+stopped.total <- apply(sqf.ct[cols.stopped], 1, sum)
 
-stop.clothing <- sffinal[sffinal$stopped.bc.clothing == TRUE,]
+sqf.ct$stopped.total <- stopped.total
 
+# Rates
+rates <- sqf.ct %>%
+    group_by(boro_ct201) %>%
+    summarise(stop.clothing=sum(stopped.bc.clothing)/sum(stopped.total),
+        stop.furtive=sum(stopped.bc.furtive)/sum(stopped.total),
+        total_stopped=mean(stopped.total))
 
-# B. Furtive Movements
-stop.furtive <- sffinal[sffinal$stopped.bc.furtive == TRUE, ]
-
-
-# C. Stops vs. Frisks? because of Clothing/Furtive
-#could look at where stops because of a certain variable also turn into 
-#frisks and how that clusters
 
