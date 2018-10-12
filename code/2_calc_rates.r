@@ -17,8 +17,8 @@ sqf.ct$stopped.total <- stopped.total
 # Rates
 rates <- sqf.ct %>%
     group_by(boro_ct201) %>%
-    summarise(stop.clothing=sum(stopped.bc.clothing)/total,
-        stop.furtive=sum(stopped.bc.furtive)/total,
+   summarise(stop.clothing=sum(stopped.bc.clothing)/mean(total),
+        stop.furtive=sum(stopped.bc.furtive)/mean(total),
         total_stopped=mean(total))
 
 
