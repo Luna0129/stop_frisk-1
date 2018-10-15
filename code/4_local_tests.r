@@ -4,19 +4,38 @@
 
 
 
+# I. Clothing
+## A. Rook Weighting
+set.seed(2090)
+nbs <- poly2nb(race_merged2, queen = F)
+lws <- nb2listw(nbs, zero.policy = T)
 
-# A. Rook Weighting
-PA.nb <- poly2nb(PA.utm,queen=FALSE)
-PA.lw <- nb2listw(PA.nb)
-
-moran.loc.rook <-localmoran(PA.agg$adj.rate,PA.lw,p.adjust.method="fdr") 
+moran.loc.rook <-localmoran(rates$stop.clothing,lws,p.adjust.method="fdr", zero.policy = T) 
 shades <- shading(c(0.05),cols=c(2,8))
-choropleth(PA.utm,moran.loc[,"Pr(z > 0)"],shades)
+choropleth(race_merged2,moran.loc.rook[,"Pr(z > 0)"],shades)
 
-# B. Queen Weighting
-PA.nb <- poly2nb(PA.utm,queen=TRUE)
-PA.lw <- nb2listw(PA.nb)
+## B. Queen Weighting
+nbs <- poly2nb(race_merged2, queen = T)
+lws <- nb2listw(nbs, zero.policy = T)
 
-moran.loc.queen <-localmoran(PA.agg$adj.rate,PA.lw,p.adjust.method="fdr") 
+moran.loc.queen <-localmoran(rates$stop.clothing,lws,p.adjust.method="fdr", zero.policy = T) 
 shades <- shading(c(0.05),cols=c(2,8))
-choropleth(PA.utm,moran.loc[,"Pr(z > 0)"],shades)
+choropleth(race_merged2,moran.loc.queen[,"Pr(z > 0)"],shades)
+
+# II. Furtive Movements
+## A. Rook Weighting
+set.seed(2090)
+nbs <- poly2nb(race_merged2, queen = F)
+lws <- nb2listw(nbs, zero.policy = T)
+
+moran.loc.rook <-localmoran(rates$stop.furtive,lws,p.adjust.method="fdr", zero.policy = T) 
+shades <- shading(c(0.05),cols=c(2,8))
+choropleth(race_merged2,moran.loc.rook[,"Pr(z > 0)"],shades)
+
+## B. Queen Weighting
+nbs <- poly2nb(race_merged2, queen = T)
+lws <- nb2listw(nbs, zero.policy = T)
+
+moran.loc.queen <-localmoran(rates$stop.furtive,lws,p.adjust.method="fdr", zero.policy = T) 
+shades <- shading(c(0.05),cols=c(2,8))
+choropleth(race_merged2,moran.loc.queen[,"Pr(z > 0)"],shades)
