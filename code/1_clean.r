@@ -127,7 +127,29 @@ race_merged@data$total.stops <- poly.counts(sqf.spdf, race_merged)
 race_merged@data$stopped.clothing <- poly.counts(sqf.spdf[sqf.spdf@data$stopped.bc.clothing == TRUE,], race_merged)
 race_merged@data$stopped.furtive <- poly.counts(sqf.spdf[sqf.spdf@data$stopped.bc.furtive == TRUE,], race_merged)
 
+# Alt: Merge with census tract data
+library(rgeos)
+mergepoints <- gContains(race_merged, sqf.spdf, byid=T)
+# this is to check if some points don't match to polygons
+sum(apply(mergepoints,1,FUN=sum)==0) # 19 cases to drop (probably stoppd in parks, etc.)
+# Change to character instead of factor
+race_merged$boro_ct201 <- as.character(race_merged$boro_ct201)
+sqf.spdf$boro_ct201 <- 0
+# Extract the census tract each point matched with
+for(i in 1:dim(mergepoints)[2]){
+  sqf.spdf$boro_ct201[mergepoints[,i]] <- race_merged$boro_ct201[i]
+}
+# Check that it worked
+head(sqf.spdf$boro_ct201)
 
+library(dplyr)
+# Merge the data by census tract
+# NOTE: This SPDF does NOT have the Polygons. This is fine since we only
+# need them for generating the W matrix. 
+final <- merge(sqf.spdf,race_merged@data, by = "boro_ct201")
+head(final)
+head(final$boro_ct201)
 
 # SAVE CLEANED DATA
 save(race_merged, file='data/ct_data.rdata')
+save(final, file ='data/final.rdata')
