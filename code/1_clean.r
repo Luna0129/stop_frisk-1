@@ -130,7 +130,7 @@ ct.vars <- c('boro_ct201', 'boro_name', 'ntaname',
 sqf.pts <- sqf.spdf@data
 coordinates(sqf.pts) <- ~lon+lat
 proj4string(sqf.pts) <- proj4string(CT.boundaries)
-sqf.pts.ct <- cbind.data.frame(pts, boro_ct201=over(pts, CT.boundaries)$boro_ct201)
+sqf.pts.ct <- cbind.data.frame(sqf.pts, boro_ct201=over(sqf.pts, CT.boundaries)$boro_ct201)
 
 sqf.ct <- merge(sqf.pts.ct, race_merged, by='boro_ct201')
 
