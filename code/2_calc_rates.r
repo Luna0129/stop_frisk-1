@@ -1,7 +1,6 @@
 #######################################
 ########## 2. Calculate Rates #########
 #######################################
-require(sf)
 require(dplyr)
 
 # LOAD CLEANED DATA
@@ -23,4 +22,3 @@ rates <- rates[-1,]
 
 # Save the rates data
 save(rates, file='data/rates.rdata')
-

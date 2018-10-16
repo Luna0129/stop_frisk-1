@@ -1,13 +1,18 @@
 ###############################
 ####### 3. Global Tests #######
 ###############################
-library(sf)
+library(rgdal)
 library(sp)
 library(spdep)
 library(spatstat)
 
+# Load CT rates data
+# "rates"
 load('data/rates.rdata')
 
+# Load CT SpatialPolygons
+# "ct.sp"
+load('data/ct.sp.rdata')
 
 
 autoCor <- function(geometry, crs, rateVar, test='moran', nsim, queen=FALSE) {
@@ -86,3 +91,4 @@ moran.mc(rates$stop.furtive,lws,nsim=999, zero.policy = T)
 ### Geary's c
 geary.test(rates$stop.furtive,lws, zero.policy = T)
 geary.mc(rates$stop.furtive,lws,nsim=999, zero.policy = T)
+

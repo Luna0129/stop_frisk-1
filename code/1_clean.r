@@ -31,19 +31,19 @@ race <- acs.fetch(endyear = 2011, geography = geo,
 attr(race, "acs.colnames")
 
 #create data.frame of relevant census data
+cols.race <- c("Hispanic or Latino by Race: Total:",
+  "Hispanic or Latino by Race: Not Hispanic or Latino: White alone",
+  "Hispanic or Latino by Race: Not Hispanic or Latino: Black or African American alone",
+  "Hispanic or Latino by Race: Not Hispanic or Latino: American Indian and Alaska Native alone",
+  "Hispanic or Latino by Race: Not Hispanic or Latino: Asian alone",
+  "Hispanic or Latino by Race: Hispanic or Latino: White alone",
+  "Hispanic or Latino by Race: Hispanic or Latino: Black or African American alone")
 race_df <- data.frame(race@geography$county, race@geography$tract, 
-                      race@estimate[,c("Hispanic or Latino by Race: Total:",
-                                       "Hispanic or Latino by Race: Not Hispanic or Latino: White alone", 
-                                       "Hispanic or Latino by Race: Not Hispanic or Latino: Black or African American alone", 
-                                       "Hispanic or Latino by Race: Not Hispanic or Latino: American Indian and Alaska Native alone",
-                                       "Hispanic or Latino by Race: Not Hispanic or Latino: Asian alone", 
-                                       "Hispanic or Latino by Race: Hispanic or Latino: White alone", 
-                                       "Hispanic or Latino by Race: Hispanic or Latino: Black or African American alone")], 
+                      race@estimate[, cols.race], 
                       stringsAsFactors = FALSE)
 rownames(race_df) <- 1:nrow(race_df)
 names(race_df) <- c("county", "tract", "total_pop", "white", "black", "native.american", "asian", "white.hisp", "black.hisp")
-race_df["other"] <- race_df$total_pop - (race_df$white + race_df$black + race_df$native.american + 
-                                           race_df$asia + race_df$white.hisp + race_df$black.hisp)
+race_df["other"] <- race_df$total_pop - (race_df$white + race_df$black + race_df$native.american + race_df$asia + race_df$white.hisp + race_df$black.hisp)
 
 # Standardize census tract codes between shapefile (coded by borough) and census (coded by county)
 race_df$county[race_df$county %in% 61] <- 1
@@ -66,6 +66,9 @@ race_merged@data["per_whisp"] <- race_merged@data$white.hisp/race_merged@data$to
 race_merged@data["per_bhisp"] <- race_merged@data$black.hisp/race_merged@data$total_pop
 race_merged@data["per_other"] <- race_merged@data$other/race_merged@data$total_pop
 
+# Save SpatialPolygons object from merged census tract data
+ct.sp <- SpatialPolygons(Srl=race_merged@polygons, pO=race_merged@plotOrder, proj4string=race_merged@proj4string)
+save(ct.sp, file='data/ct.sp.rdata')
 
 # DIAGNOSTIC PLOTS
 plot(race_merged["per_white"])
@@ -149,6 +152,13 @@ library(dplyr)
 final <- merge(sqf.spdf,race_merged@data, by = "boro_ct201")
 head(final)
 head(final$boro_ct201)
+
+# Alan: Merge with census tract data
+sqf.pts <- sqf.spdf@data
+coordinates(sqf.pts) <- ~lon+lat
+proj4string(sqf.pts) <- proj4string(CT.boundaries)
+sqf.pts.ct <- cbind.data.frame(sqf.pts, boro_ct201=over(sqf.pts, CT.boundaries)$boro_ct201)
+sqf.ct <- merge(sqf.pts.ct, race_merged, by='boro_ct201')
 
 # SAVE CLEANED DATA
 save(race_merged, file='data/ct_data.rdata')
