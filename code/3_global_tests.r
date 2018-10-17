@@ -6,7 +6,7 @@ library(sp)
 library(spdep)
 library(spatstat)
 
-# Load CT rates data
+# Load CT rate data
 # "rates"
 load('data/race_merged.rdata')
 
@@ -22,29 +22,29 @@ race_merged2 <- race_merged[rm,]
 set.seed(2090)
 nbs <- poly2nb(race_merged2, queen = F)
 lws <- nb2listw(nbs, zero.policy = T)
-choropleth(race_merged2,rates$stop.clothing)
+choropleth(race_merged2,race_merged2@data$rate.clothing)
 
 ### Moran's I
-moran.test(rates$stop.clothing,lws, zero.policy = T)
-moran.mc(rates$stop.clothing,lws,nsim=999, zero.policy = T)
+moran.test(race_merged2@data$rate.clothing,lws, zero.policy = T)
+moran.mc(race_merged2@data$rate.clothing,lws,nsim=999, zero.policy = T)
 
 ### Geary's c
-geary.test(rates$stop.clothing,lws, zero.policy = T)
-geary.mc(rates$stop.clothing,lws,nsim=999, zero.policy = T)
+geary.test(race_merged2@data$rate.clothing,lws, zero.policy = T)
+geary.mc(race_merged2@data$rate.clothing,lws,nsim=999, zero.policy = T)
 
 ## B. Queen Weighting
 ### Pre-process data
 nbs <- poly2nb(race_merged2, queen = T)
 lws <- nb2listw(nbs, zero.policy = T)
-choropleth(race_merged2,rates$stop.clothing)
+choropleth(race_merged2,race_merged2@data$rate.clothing)
 
 ### Moran's I
-moran.test(rates$stop.clothing,lws, zero.policy = T)
-moran.mc(rates$stop.clothing,lws,nsim=999, zero.policy = T)
+moran.test(race_merged2@data$rate.clothing,lws, zero.policy = T)
+moran.mc(race_merged2@data$rate.clothing,lws,nsim=999, zero.policy = T)
 
 ### Geary's c
-geary.test(rates$stop.clothing,lws, zero.policy = T)
-geary.mc(rates$stop.clothing,lws,nsim=999, zero.policy = T)
+geary.test(race_merged2@data$rate.clothing,lws, zero.policy = T)
+geary.mc(race_merged2@data$rate.clothing,lws,nsim=999, zero.policy = T)
 
 # II. Furtive Movements
 ## A. Rook Weighting
@@ -53,27 +53,27 @@ geary.mc(rates$stop.clothing,lws,nsim=999, zero.policy = T)
 set.seed(2090)
 nbs <- poly2nb(race_merged2, queen = F)
 lws <- nb2listw(nbs, zero.policy = T)
-choropleth(race_merged2,rates$stop.furtive)
+choropleth(race_merged2,race_merged2@data$rate.furtive)
 
 ### Moran's I
-moran.test(rates$stop.furtive,lws, zero.policy = T)
-moran.mc(rates$stop.furtive,lws,nsim=999, zero.policy = T)
+moran.test(race_merged2@data$rate.furtive,lws, zero.policy = T)
+moran.mc(race_merged2@data$rate.furtive,lws,nsim=999, zero.policy = T)
 
 ### Geary's c
-geary.test(rates$stop.furtive,lws, zero.policy = T)
-geary.mc(rates$stop.furtive,lws,nsim=999, zero.policy = T)
+geary.test(race_merged2@data$rate.furtive,lws, zero.policy = T)
+geary.mc(race_merged2@data$rate.furtive,lws,nsim=999, zero.policy = T)
 
 ## B. Queen Weighting
 ### Pre-process data
 nbs <- poly2nb(race_merged2, queen = T)
 lws <- nb2listw(nbs, zero.policy = T)
-choropleth(race_merged2,rates$stop.clothing)
+choropleth(race_merged2,race_merged2@data$rate.clothing)
 
 ### Moran's I
-moran.test(rates$stop.furtive,lws, zero.policy = T)
-moran.mc(rates$stop.furtive,lws,nsim=999, zero.policy = T)
+moran.test(race_merged2@data$rate.furtive,lws, zero.policy = T)
+moran.mc(race_merged2@data$rate.furtive,lws,nsim=999, zero.policy = T)
 
 ### Geary's c
-geary.test(rates$stop.furtive,lws, zero.policy = T)
-geary.mc(rates$stop.furtive,lws,nsim=999, zero.policy = T)
+geary.test(race_merged2@data$rate.furtive,lws, zero.policy = T)
+geary.mc(race_merged2@data$rate.furtive,lws,nsim=999, zero.policy = T)
 
