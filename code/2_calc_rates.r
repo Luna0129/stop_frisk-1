@@ -1,7 +1,7 @@
 #######################################
 ########## 2. Calculate Rates #########
 #######################################
-load('data/race_merged.rdata')
+load('data/ct_data.rdata')
 
 #Rate calculations
 race_merged@data$rate.clothing <- race_merged@data$stopped.clothing/race_merged@data$total.stops
