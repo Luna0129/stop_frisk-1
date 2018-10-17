@@ -25,4 +25,12 @@ check.merge <- merge(CT.boundaries,na, by="boro_ct201", all.x=FALSE)
 str(check.merge, max.level = 2) #3 cts
 plot(check.merge) #looks right
 
-
+#first drop the NAs and then merge, clean version
+results$boro_ct201 <- race_merged2$boro_ct201
+drops <- apply(is.na(results[, c('clothing.rook', 'clothing.queen', 'furtive.rook', 'furtive.queen')]), 1, any)
+results.keep <- results[!drops,] #2150 cts
+merged <- merge(race_merged2, results.keep, by='boro_ct201',all.x=FALSE) 
+#sum(is.na(merged@data$clothing.rook)) check again, 0 
+#sum(is.na(merged@data$clothing.queen))
+#sum(is.na(merged@data$furtive.rook))
+#sum(is.na(merged@data$furtive.queen))
