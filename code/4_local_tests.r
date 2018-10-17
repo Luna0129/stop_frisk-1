@@ -2,6 +2,11 @@
 ###### 4. Local Tests #######
 #############################
 
+library(sf)
+library(sp)
+library(spdep)
+library(spatstat)
+
 # Load CT rate data
 # "rates"
 load('data/race_merged.rdata')
