@@ -11,7 +11,9 @@ race_merged@data$rate.furtive <- race_merged@data$stopped.furtive/race_merged@da
 race_merged@data$rate.clothing[is.na(race_merged@data$rate.clothing)] <- 0
 race_merged@data$rate.furtive[is.na(race_merged@data$rate.furtive)] <- 0
 
-empty <- race_merged@data[race_merged@data$total_pop == 0 & race_merged@data$total.stops == 0,]
+#dropping census tracts with total pop of 0 and total stops of 0
+empty <- race_merged@data[race_merged@data$total_pop == 0 & race_merged@data$total.stops == 0
+                          | is.na(race_merged@data$total_pop),]
 rm <- !(race_merged$boro_ct201 %in% empty$boro_ct201)
 race_merged3 <- race_merged[rm,]
 
