@@ -8,8 +8,11 @@ leaflet(na.check) %>%
   addPolygons(color = "#444444", weight = 0.4, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5) 
 #looks problematic
+na <- results[drops,]
+head(na) #not NAs 
+
 #so I breaked things down and checked under each local moran matrix, eg. 
-na1 <- moran.loc.queen %>% 
+na <- moran.loc.queen %>% 
   as.data.frame() %>%
   mutate(boro_ct201 = race_merged2$boro_ct201) %>%
   filter(is.na(moran.loc.rook[,5]))
@@ -28,7 +31,7 @@ plot(check.merge) #looks right
 #first drop the NAs and then merge, clean version
 results$boro_ct201 <- race_merged2$boro_ct201
 drops <- apply(is.na(results[, c('clothing.rook', 'clothing.queen', 'furtive.rook', 'furtive.queen')]), 1, any)
-results.keep <- results[!drops,] #2150 cts
+results.keep <- results[!drops,] #2150 cts, dropped 3 islands
 merged <- merge(race_merged2, results.keep, by='boro_ct201',all.x=FALSE) 
 #sum(is.na(merged@data$clothing.rook)) check again, 0 
 #sum(is.na(merged@data$clothing.queen))
