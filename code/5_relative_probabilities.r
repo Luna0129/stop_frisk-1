@@ -26,39 +26,45 @@ merged <- merged@data[!drops,]
 
 # Calculate relative probabilities
 
-relativeProb <- function(stopType='clothing', nbType='rook', denom='total_pop', data=merged) {
+relativeProb <- function(stopType='clothing', queen=TRUE, pop='total_pop', data=merged) {
     # Probability of stop within hotspots / probability of stop outside of hotspots
     # Argument values
     # stop: ['clothing', 'furtive']
-    # nbType: ['rook', 'queen']
-    # denom: ['total_pop', 'white', 'black', 'native.american', 'asian', 'white.hisp', 'black.hisp', 'other']
+    # pop: ['total_pop', 'white', 'black', 'native.american', 'asian', 'white.hisp', 'black.hisp', 'other']
 
-    # Variables for specified stop type and neighbor type
+    # Select rate variable and hotspots by user specified stop type and neighbor type
     if (stopType == 'clothing') {
-        stopVar <- 'rate.clothing'
-
-        if (nbType == 'rook') {
+        if (!queen) {
             hotspots <- data$clothing.rook <= 0.05
         } else {
             hotspots <- data$clothing.queen <= 0.05
         }
+        rate.hot <- data[hotspots, 'rate.clothing']
+        rate.not <- data[!hotspots, 'rate.clothing']
     } else {
-        stopVar <- 'rate.furtive'
-        
-        if (nbType == 'rook') {
+        if (!queen) {
             hotspots <- data$furtive.rook <= 0.05
         } else {
             hotspots <- data$furtive.queen <= 0.05
         }
+        rate.hot <- data[hotspots, 'rate.furtive']
+        rate.not <- data[!hotspots, 'rate.furtive']
     }
 
+    # Select population denominator by user specified population
+    pop.hot <- data[hotspots, pop]
+    pop.not <- data[!hotspots, pop]
+
     # Calculate probability within hotspot
-    prob.hot <- weighted.mean(data[hotspots, stopVar] / data[hotspots, denom], data[hotspots, denom], na.rm=TRUE)
+    prob.hot <- weighted.mean( rate.hot / pop.hot,
+        pop.hot, na.rm=TRUE)
 
     # Calcuate probability outside hotspot
-    prob.not <- weighted.mean(data[!hotspots, stopVar] / data[!hotspots, denom], data[!hotspots, denom], na.rm=TRUE)
+    prob.not <- weighted.mean( rate.not / pop.not,
+        pop.not, na.rm=TRUE)
 
     return( prob.hot / prob.not)
 }
+
 
 
